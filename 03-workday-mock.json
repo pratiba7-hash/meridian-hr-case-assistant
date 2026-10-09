@@ -1,0 +1,138 @@
+{
+  "name": "Mock Workday Employee API",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "a46331ca-4a26-402a-bfb1-7fbb89246de5",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c6f31b1b-77a8-4317-8adc-ceb8e8f2bdb7",
+      "name": "Webhook",
+      "webhookId": "a46331ca-4a26-402a-bfb1-7fbb89246de5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        416,
+        0
+      ],
+      "id": "46b0d566-db9e-469c-ab0d-4735fbab7fa2",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3577e3cb-ecc5-4c35-b903-cb3bcb50a000",
+              "name": "worker_id",
+              "value": "={{ $('Webhook').item.json.body.employee_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c9b372ef-4ca6-4214-be2a-27d8c9a3c34c",
+              "name": "employment_status",
+              "value": "Active",
+              "type": "string"
+            },
+            {
+              "id": "5fb2cdcc-9f71-4d3f-8d0d-4608705460e4",
+              "name": "country",
+              "value": "Netherlands",
+              "type": "string"
+            },
+            {
+              "id": "dd3b73fc-af21-47ca-af5f-63b757b5c536",
+              "name": "business_unit",
+              "value": "Logistics Operations",
+              "type": "string"
+            },
+            {
+              "id": "25512a9f-9c75-47ed-a219-84246cd80d6b",
+              "name": "work_email",
+              "value": "={{ String($('Webhook').item.json.body.employee_id).toLowerCase() + '@meridian-logistics.example' }}",
+              "type": "string"
+            },
+            {
+              "id": "51a61c29-a31b-4ae9-8724-c760b89e836e",
+              "name": "validation_status",
+              "value": "Validated",
+              "type": "string"
+            },
+            {
+              "id": "3adebc54-e4ba-4c59-90f6-a2880c57a148",
+              "name": "validated_at",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "d99bd674-8627-4783-aee4-8233b39d8075",
+              "name": "source",
+              "value": "Mock Workday API",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8b251b38-18c1-4eff-a3b7-9bffe2b8c6b9",
+      "name": "Prepare Workday Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Workday Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Workday Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3c551c60-805d-454a-a42a-4bc9b21e3b20",
+  "meta": {
+    "instanceId": "830695148bd1ae79a7685a5d7f1fa337ea0c44b5e0b04bf9816d60425264c85f"
+  },
+  "id": "g3HQfS6xRGWddOoR",
+  "tags": []
+}

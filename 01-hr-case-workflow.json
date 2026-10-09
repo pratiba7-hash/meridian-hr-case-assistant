@@ -1,0 +1,1686 @@
+{
+  "name": "HR Case Intake POC copy - final",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "HR Case Intake POC",
+        "formDescription": "Submit a question to HR. This demonstration uses fictional employee information.\nSelect Yes for harassment, discrimination, bullying, grievances, misconduct, medical information or another matter that should be handled confidentially by HR.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "case_topic",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Payslip"
+                  },
+                  {
+                    "option": "Annual leave"
+                  },
+                  {
+                    "option": "Parental leave"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "country",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Netherlands"
+                  },
+                  {
+                    "option": "Other"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "case_text",
+              "fieldType": "textarea"
+            },
+            {
+              "fieldLabel": "contact_email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Employee ID",
+              "placeholder": "For example: WD-10458",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Please do not upload medical documents, passwords, banking details or extensive sensitive evidence. HR will provide a secure channel if further information is required.",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Agree"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Does your request concern a confidential or sensitive matter?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes – confidential HR review"
+                  },
+                  {
+                    "option": "No – routine HR or policy question"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        416
+      ],
+      "id": "fc325575-7fed-4309-a697-56de3fed66fa",
+      "name": "On form submission",
+      "webhookId": "38dbbf94-e04a-472b-a1ce-aaca6b0d83e9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e3f5caf-bdbd-48fd-ab8d-72e380708e74",
+              "name": "=case_id",
+              "value": "={{ 'HR-' + $now.toFormat('yyyyMMdd-HHmmss') + '-' + $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "1573f5d6-26b5-471f-a146-c872a2248e71",
+              "name": "$execution.id",
+              "value": "={{ $execution.id }}",
+              "type": "string"
+            },
+            {
+              "id": "238ea2d1-c221-40d0-a7ab-0168360596eb",
+              "name": "$now",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "42f9f2cc-38df-44ea-a899-1f1b22330b86",
+              "name": "review_status",
+              "value": "New",
+              "type": "string"
+            },
+            {
+              "id": "04a14bf2-f218-481a-b6a3-98425cdb8f7c",
+              "name": "employee_id",
+              "value": "={{ $json['Employee ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "2bde27aa-7536-4391-9eb4-68f8b8f869ac",
+              "name": "contact_email",
+              "value": "={{ $json.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "a8fdda6a-0646-4062-9619-85fdc0fa3a3c",
+              "name": "case_topic",
+              "value": "={{ $json.case_topic }}",
+              "type": "string"
+            },
+            {
+              "id": "c320967e-148f-4d65-9b4e-5dbafb192840",
+              "name": "case_text",
+              "value": "={{ $json.case_text }}",
+              "type": "string"
+            },
+            {
+              "id": "262dd8e9-7405-40ba-a2e1-9db72a350c50",
+              "name": "country",
+              "value": "={{ $json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "9ac5895e-c4a7-45f5-8893-339b9903093e",
+              "name": "email_status",
+              "value": "Pending",
+              "type": "string"
+            },
+            {
+              "id": "1fae1987-9753-4d90-9252-c9ca8c2b6582",
+              "name": "privacy_notice_acknowledged",
+              "value": "={{ $json['Please do not upload medical documents, passwords, banking details or extensive sensitive evidence. HR will provide a secure channel if further information is required.'][0] }}",
+              "type": "string"
+            },
+            {
+              "id": "f55cd15c-cbb9-46f0-bfe0-a871ca25c955",
+              "name": "confidential_case",
+              "value": "={{ $json[\"Does your request concern a confidential or sensitive matter?\"] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        416
+      ],
+      "id": "b8fd3855-3360-42a4-b3a8-85ff2dcf01dc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "324d4efe-4e7b-47c1-8de5-1b6af0ba444d",
+              "name": "risk",
+              "value": "High",
+              "type": "string"
+            },
+            {
+              "id": "dded591d-47b1-4b1c-8993-fffaa8a8ea36",
+              "name": "decision",
+              "value": "Escalate to HR",
+              "type": "string"
+            },
+            {
+              "id": "97a0e56c-6a98-4331-886b-06133e9accdd",
+              "name": "reason",
+              "value": "Sensitive case requires human review",
+              "type": "string"
+            },
+            {
+              "id": "19501232-d18d-411d-9c4e-d22f37bf1550",
+              "name": "policy_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "edd96a26-0152-4793-8ec0-69f06362a97e",
+              "name": "policy_section",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b0154728-5240-4f37-aa25-e13489158abb",
+              "name": "draft_response",
+              "value": "Sensitive case escalated without an automated policy response.",
+              "type": "string"
+            },
+            {
+              "id": "e1e8046a-1e05-4b68-bf3c-22f7f4bddc52",
+              "name": "review_status",
+              "value": "New",
+              "type": "string"
+            },
+            {
+              "id": "aadc924c-b1e1-4839-9d54-3f83aeb9de65",
+              "name": "case_id",
+              "value": "={{ $('Edit Fields').item.json.case_id }}",
+              "type": "string"
+            },
+            {
+              "id": "aedc6c6d-9a53-4826-a540-ec5eef6e4e04",
+              "name": "submitted_at",
+              "value": "={{ $('Edit Fields').item.json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "9226187f-73e8-4c6b-9521-c8d192426ae3",
+              "name": "case_text",
+              "value": "={{ $('Edit Fields').item.json.case_text }}",
+              "type": "string"
+            },
+            {
+              "id": "e117d33b-8213-4a62-bde7-786b3670da8b",
+              "name": "case_topic",
+              "value": "={{ $('Edit Fields').item.json.case_topic }}",
+              "type": "string"
+            },
+            {
+              "id": "596da841-584a-4502-b2c5-cac4436304b3",
+              "name": "contact_email",
+              "value": "={{ $('Edit Fields').item.json.contact_email }}",
+              "type": "string"
+            },
+            {
+              "id": "3e18b9f5-a142-4153-b2af-5695025c4289",
+              "name": "employee_id",
+              "value": "={{ $('Edit Fields').item.json['Employee ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "a1f59ece-d2f8-4441-80c1-28d29f494714",
+              "name": "country",
+              "value": "={{ $('Edit Fields').item.json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "6562c845-9e39-47f0-a715-27dbb9ab51f8",
+              "name": "risk_level",
+              "value": "High",
+              "type": "string"
+            },
+            {
+              "id": "b5a8e20b-30da-4c22-95ad-6e5c53ff349f",
+              "name": "email_status",
+              "value": "Pending",
+              "type": "string"
+            },
+            {
+              "id": "b9fc57a0-036a-4d7b-8e27-75404d18c930",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3072,
+        224
+      ],
+      "id": "5130a53f-b0a8-46de-b6af-363ce5d02d32",
+      "name": "Escalate sensitive case",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d02e669-e328-4f0d-88e4-c02e294a8846",
+              "name": "risk",
+              "value": "Medium",
+              "type": "string"
+            },
+            {
+              "id": "3caedf89-7951-4e74-8a20-e46ef6aaf251",
+              "name": "decision",
+              "value": "Escalate to HR",
+              "type": "string"
+            },
+            {
+              "id": "ce711687-c7f7-4f9c-b151-ce69503f6739",
+              "name": "reason",
+              "value": "No matching approved policy found",
+              "type": "string"
+            },
+            {
+              "id": "b0b511a3-9797-4745-8388-378185b1d79c",
+              "name": "policy_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "5a789e76-e3dc-4503-bd2f-8d097b25bf87",
+              "name": "policy_section",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "b6d92450-ae81-4bca-af5d-346871b1d6c7",
+              "name": "",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "78aa2607-bfb0-4f15-9d28-85a9cc856088",
+              "name": "draft_response",
+              "value": "No sufficiently relevant approved policy was retrieved.",
+              "type": "string"
+            },
+            {
+              "id": "e25ca3cc-74a1-4f21-9a9e-0af6a7bb91c1",
+              "name": "review_status",
+              "value": "New",
+              "type": "string"
+            },
+            {
+              "id": "6e756bdf-c016-4f53-91cc-0087b3b65402",
+              "name": "=case_id",
+              "value": "={{ $('Edit Fields').item.json.case_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4ccc06b-3565-4abc-bcfc-99a27dad519a",
+              "name": "submitted_at",
+              "value": "={{ $('Edit Fields').item.json.submittedAt }}",
+              "type": "string"
+            },
+            {
+              "id": "742dcc40-77f0-4f91-bd1c-d01b6cb5174b",
+              "name": "case_topic",
+              "value": "={{ $('Edit Fields').item.json.case_topic }}",
+              "type": "string"
+            },
+            {
+              "id": "fd98c91a-e662-4263-b7c3-7dc45714bb3e",
+              "name": "country",
+              "value": "={{ $('Edit Fields').item.json.country }}",
+              "type": "string"
+            },
+            {
+              "id": "3af19f94-c3a0-4e65-aec1-ca3793878cc8",
+              "name": "case_text",
+              "value": "={{ $('Edit Fields').item.json.case_text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3072,
+        640
+      ],
+      "id": "97de077d-9550-4dbb-a07a-4a3efa353bdf",
+      "name": "No policy found",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are preparing an HR response draft for Meridian Logistics.\n\nEMPLOYEE QUESTION:\n{{ $('Edit Fields').item.json.case_text }}\n\nCASE TOPIC:\n{{ $('Edit Fields').item.json.case_topic }}\n\nRETRIEVED POLICY EVIDENCE:\n{{ $('Prepare RAG Result').item.json.policy_evidence }}\n\nPOLICY ID:\n{{ $('Prepare RAG Result').item.json.policy_id }}\n\nPOLICY SECTION:\n{{ $('Prepare RAG Result').item.json.policy_section }}\n\nINSTRUCTIONS:\n- Use only the retrieved policy evidence.\n- Answer only when the evidence directly matches the employee’s question.\n- Do not invent, assume or add policy details.\n- Copy the supplied policy ID and section exactly.\n- Never replace the supplied policy ID or section with a different one.\n- Do not make a final legal, payroll, eligibility or disciplinary decision.\n- Explain the general policy clearly, but state that individual eligibility or\n  balance must be verified by HR or through Workday when appropriate.\n- Do not say information is missing if it is already present in the evidence.\n- Do not use placeholders such as [Employee's Name] or [Your Name].\n- Mention the policy reference only once.\n- Start with “Hello,”.\n- End with “Kind regards, Meridian Logistics HR Operations.”\n- Keep the response concise, professional and under 180 words.\n- Clearly state that the response is a draft subject to HR review.\n\nIf the retrieved evidence does not directly answer the employee’s question,\nreturn exactly:\nNO_MATCH\n\nRETURN FORMAT:\n\nDraft response:\n\n[Employee-friendly answer]\n\nPolicy reference: [supplied policy ID], Section [supplied policy section].\n\nThis draft is subject to HR review.\n\nKind regards,\nMeridian Logistics HR Operations"
+            },
+            {
+              "content": "={{\n`Employee question:\n${$('Edit Fields').item.json.case_text}\n\nRetrieved policy evidence:\n${$('Prepare RAG Result').item.json.policy_evidence || $('Prepare RAG Result').item.json.retrieved_text}\n\nPolicy ID:\n${$('Prepare RAG Result').item.json.policy_id}\n\nPolicy section:\n${$('Prepare RAG Result').item.json.policy_section}\n\nPrepare a concise draft response for an HR reviewer.`\n}}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 300,
+          "textFormat": {
+            "textOptions": {
+              "type": "text"
+            }
+          },
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        2720,
+        448
+      ],
+      "id": "6c4b10dc-abb5-46b8-9707-9275e590a376",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QzyQFa0LbVoBlIi7",
+          "name": "OpenAi account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d807e307-3a20-4b25-866d-cd99e80b8ff3",
+              "name": "risk",
+              "value": "Low",
+              "type": "string"
+            },
+            {
+              "id": "801552e8-db9c-4efb-bbd5-f3ae4e5f20e5",
+              "name": "reason",
+              "value": "Relevant Meridian Logistics policy evidence retrieved",
+              "type": "string"
+            },
+            {
+              "id": "36b71e30-e509-487a-8ecc-987c8f9f6bae",
+              "name": "review_status",
+              "value": "={{ $('If-Secondary Sensitive case check').item.json.review_status }}",
+              "type": "string"
+            },
+            {
+              "id": "6780e60c-e5ef-4fe4-9005-3cd65cff3509",
+              "name": "=policy_id",
+              "value": "=| Field            | Value                                                    |\n| ---------------- | -------------------------------------------------------- |\n| `policy_id`      | `{{ $('Prepare RAG Result').item.json.policy_id }}`      |\n| `policy_section` | `{{ $('Prepare RAG Result').item.json.policy_section }}` |\n| `risk_level`     | `Low`                                                    |\n| `decision`       | `Draft for HR review`                                    |\n| `review_status`  | `New`                                                    |\n| `draft_response` | The output text from Message a model                     |\n| `reason`         | `Relevant Meridian Logistics policy evidence retrieved`  |\n",
+              "type": "string"
+            },
+            {
+              "id": "7746c11f-16ca-4723-913f-79ca87cbc2c9",
+              "name": "section",
+              "value": "={{ $('Prepare RAG Result').item.json.policy_section }}",
+              "type": "string"
+            },
+            {
+              "id": "bc5f8a88-94d2-43fa-b26d-3a51088c937d",
+              "name": "=draft_response",
+              "value": "={{ $json.output[0].content[0].text }}",
+              "type": "string"
+            },
+            {
+              "id": "e3283d6c-3b4a-4dc5-a51e-f080eb80bda7",
+              "name": "decision",
+              "value": "Draft for HR review",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3072,
+        448
+      ],
+      "id": "487dcedf-b353-4ccb-ac23-eeeba49e37d4",
+      "name": "Draft for HR review"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "a2r7jk8kDJArD8Et",
+          "mode": "list",
+          "cachedResultName": "HR_cases",
+          "cachedResultUrl": "/projects/kam1YA6Lh8uAnomj/datatables/a2r7jk8kDJArD8Et"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ $('Edit Fields').item.json.case_id }}",
+            "submitted_at": "={{ $('Edit Fields').item.json.submittedAt }}",
+            "case_topic": "={{ $('Edit Fields').item.json.case_topic }}",
+            "country": "={{ $('Edit Fields').item.json.country }}",
+            "case_text": "={{ $('Edit Fields').item.json.case_text }}",
+            "risk": "={{ $json.risk }}",
+            "decision": "={{ $json.decision }}",
+            "reason": "={{ $json.reason }}",
+            "policy_id": "={{ $json.policy_id || '' }}",
+            "policy_section": "={{ $json.policy_section || $json.section || '' }}",
+            "draft_response": "={{ $json.draft_response }}",
+            "review_status": "={{ $('Edit Fields').item.json.review_status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "case_topic",
+              "displayName": "case_topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "case_text",
+              "displayName": "case_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "risk",
+              "displayName": "risk",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "policy_id",
+              "displayName": "policy_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "policy_section",
+              "displayName": "policy_section",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "draft_response",
+              "displayName": "draft_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "review_status",
+              "displayName": "review_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3296,
+        448
+      ],
+      "id": "93e56dc8-eea1-4bcd-ba60-ac74be5c7730",
+      "name": "HR Cases",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "memoryKey": {
+          "__rl": true,
+          "value": "meridian_hr_policies_v2",
+          "mode": "id"
+        },
+        "prompt": "={{ $json.normalized_case_text || $json.case_text || $('Edit Fields').item.json.case_text }}",
+        "topK": 1,
+        "useReranker": "={{ false }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [
+        1920,
+        544
+      ],
+      "id": "029ace69-042e-4ab0-8fc6-63cd87b9d258",
+      "name": "Retrieve Meridian Policy"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        768
+      ],
+      "id": "a0732db4-9495-4f61-8fef-39af65ea0418",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "QzyQFa0LbVoBlIi7",
+          "name": "OpenAi account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "965763d9-e6a2-46c4-955f-5af393468fd2",
+              "name": "=policy_evidence",
+              "value": "={{\n(() => {\n  const text =\n    $json.document?.pageContent ||\n    $json.pageContent ||\n    $json.text ||\n    $json.content ||\n    '';\n\n  const nextPolicy = text.indexOf('4. Payroll corrections');\n\n  return nextPolicy >= 0\n    ? text.slice(0, nextPolicy).trim()\n    : text.trim();\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "4f7702fd-ada9-41de-93a7-1f2ebd0fecfa",
+              "name": "policy_found",
+              "value": "={{ !!(($json.pageContent || $json.document?.pageContent || '').trim()) }}",
+              "type": "boolean"
+            },
+            {
+              "id": "fb12a483-2df9-4dfa-8db7-ff9e80dbc9ea",
+              "name": "policy_id",
+              "value": "={{\n(() => {\n  const text = String(\n    $json.document?.pageContent ||\n    $json.pageContent ||\n    $json.text ||\n    $json.content ||\n    ''\n  );\n\n  if (/3\\.1[ \\t]+Annual entitlement/i.test(text)) {\n    return 'POL-LEAVE-02';\n  }\n\n  return (text.match(/POL-[A-Z]+-\\d+/i) || [''])[0].toUpperCase();\n})()\n}}",
+              "type": "string"
+            },
+            {
+              "id": "8425e632-d1d5-4a9e-a252-a18a8535666c",
+              "name": "policy_section",
+              "value": "={{\n  (\n    String($json.document?.pageContent || $json.pageContent || $json.text || $json.content || '')\n      .match(/\\b\\d+\\.\\d+(?=[ \\t]+[A-Za-z])/)\n    || ['']\n  )[0]\n}}",
+              "type": "string"
+            },
+            {
+              "id": "976f0a5d-1c44-4ecc-b47b-7a4edfc64676",
+              "name": "retrieved_text",
+              "value": "={{ \n  $json.document?.pageContent ||\n  $json.pageContent ||\n  $json.text ||\n  $json.content ||\n  ''\n}}",
+              "type": "string"
+            },
+            {
+              "id": "5b892af1-2304-45b5-b012-68b3b86995b5",
+              "name": "policy_link",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2272,
+        544
+      ],
+      "id": "55195940-813e-4941-a989-e898da07bb2f",
+      "name": "Prepare RAG Result"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=You are a cautious HR request normalization and triage classifier.\n\nCorrect spelling, obvious typing errors and punctuation while preserving\nthe employee's intended meaning. Never add facts or assumptions.\n\nClassify the request using its meaning and context.\n\nSensitive cases include harassment, discrimination, bullying, retaliation,\nthreats, violence, abuse, immediate safety, self-harm, formal grievances,\ndisciplinary action, termination, serious misconduct, fraud, identity or\nsecurity concerns, legal claims, medical diagnoses, medical evidence and\nconfidential health information.\n\nDo not classify a case as sensitive merely because the requested benefit\nmay not be covered by company policy.\n\nQuestions about optional benefits, reimbursements, memberships or unusual\nemployee requests are low-risk routine enquiries unless they contain a\nseparate sensitive issue.\n\nPolicy availability will be checked by another workflow step. Your task is\nonly to assess sensitivity and employee risk.\n\nOnly set requires_hr_review to true when the case contains a sensitive HR\nissue or the sensitivity itself cannot be determined safely.\n\nExample:\n\"Will the company pay for a swimming pool membership at my home?\"\n\nClassification:\n{\n  \"normalized_case_text\": \"Will the company pay for a swimming pool membership at my home?\",\n  \"sensitive_case\": false,\n  \"requires_hr_review\": false,\n  \"risk\": \"low\",\n  \"category\": \"employee benefit\",\n  \"reason\": \"Routine benefit eligibility question; policy availability must be checked separately.\",\n  \"confidence\": 0.95\n}\n\nIf the request is ambiguous, lacks important information or may create\nmaterial employee risk, require HR review.\n\nIMPORTANT:\nReturn only the following valid JSON structure.\nDo not add markdown, explanations or code fences.\n\n{\n  \"normalized_case_text\": \"corrected question\",\n  \"sensitive_case\": true,\n  \"risk_level\": \"High\",\n  \"reason\": \"brief classification reason\"\n}\n\nsensitive_case must always be either true or false without quotation marks."
+            },
+            {
+              "content": "=Original employee request:\n{{ $('Edit Fields').item.json.case_text }}\n\nReturn exactly this JSON structure:\n\n{\n  \"normalized_case_text\": \"corrected employee request\",\n  \"sensitive_case\": false,\n  \"requires_hr_review\": false,\n  \"risk\": \"low\",\n  \"category\": \"short category\",\n  \"reason\": \"brief classification reason\",\n  \"confidence\": 0.95\n}"
+            },
+            {}
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 300,
+          "textFormat": {
+            "textOptions": {
+              "type": "json_schema",
+              "strict": true
+            }
+          },
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        416
+      ],
+      "id": "a0bc6ae1-b998-4d70-8a2a-dbf5da33d4cd",
+      "name": "Normalize and Classify HR Case",
+      "credentials": {
+        "openAiApi": {
+          "id": "QzyQFa0LbVoBlIi7",
+          "name": "OpenAi account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appbDqcjicv2J4dqN",
+          "mode": "list",
+          "cachedResultName": "HR_Cases",
+          "cachedResultUrl": "https://airtable.com/appbDqcjicv2J4dqN"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblwgU3Giiwun0m2f",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appbDqcjicv2J4dqN/tblwgU3Giiwun0m2f"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "policy_found": false,
+            "case_id": "={{ $json.case_id }}",
+            "submitted_at": "={{ $json.submitted_at }}",
+            "case_topic": "={{ $json.case_topic }}",
+            "case_text": "={{ $json.case_text }}",
+            "Country": "={{ $json.country }}",
+            "risk_level": "={{ $json.risk }}",
+            "decision": "={{ $json.decision }}",
+            "reason": "={{ $json.reason }}",
+            "policy_id": "={{ $json.policy_id }}",
+            "section": "={{ $json.policy_section }}",
+            "draft_response": "={{ $json.draft_response }}",
+            "review_status": "={{ $json.review_status }}",
+            "employee_id": "={{ $('Edit Fields').item.json['Employee ID'] }}",
+            "workday_worker_id": "={{ $('Merge Case and Workday Data').item.json.worker_id }}",
+            "workday_employment_status": "={{ $('Merge Case and Workday Data').item.json.employment_status }}",
+            "workday_validation_status": "={{ $('Merge Case and Workday Data').item.json.validation_status }}",
+            "workday_email": "={{ $('Merge Case and Workday Data').item.json.work_email }}",
+            "workday_validated_at": "={{ $('Merge Case and Workday Data').item.json.validated_at }}",
+            "contact_email": "={{ $('On form submission').item.json.contact_email }}",
+            "email_status": "Pending"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "employee_id",
+              "displayName": "employee_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "case_topic",
+              "displayName": "case_topic",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "case_text",
+              "displayName": "case_text",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "risk_level",
+              "displayName": "risk_level",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Low",
+                  "value": "Low"
+                },
+                {
+                  "name": "Medium",
+                  "value": "Medium"
+                },
+                {
+                  "name": "High",
+                  "value": "High"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "review_status",
+              "displayName": "review_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "In Review",
+                  "value": "In Review"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Closed",
+                  "value": "Closed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "decision",
+              "displayName": "decision",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Draft for HR review",
+                  "value": "Draft for HR review"
+                },
+                {
+                  "name": "Escalate to HR",
+                  "value": "Escalate to HR"
+                },
+                {
+                  "name": "No policy found",
+                  "value": "No policy found"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "policy_id",
+              "displayName": "policy_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "section",
+              "displayName": "section",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "draft_response",
+              "displayName": "draft_response",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "policy_found",
+              "displayName": "policy_found",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Assisted Draft",
+              "displayName": "AI Assisted Draft",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reviewer_name",
+              "displayName": "reviewer_name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "hr_comments",
+              "displayName": "hr_comments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "reviewed_at",
+              "displayName": "reviewed_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "workday_worker_id",
+              "displayName": "workday_worker_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workday_employment_status",
+              "displayName": "workday_employment_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workday_validation_status",
+              "displayName": "workday_validation_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Validated",
+                  "value": "Validated"
+                },
+                {
+                  "name": "Not Found",
+                  "value": "Not Found"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workday_email",
+              "displayName": "workday_email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "workday_validated_at",
+              "displayName": "workday_validated_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "contact_email",
+              "displayName": "contact_email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "email_status",
+              "displayName": "email_status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Sent",
+                  "value": "Sent"
+                },
+                {
+                  "name": "Failed",
+                  "value": "Failed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        3520,
+        448
+      ],
+      "id": "75b75d18-47de-4962-a5df-d79039e3baf0",
+      "name": "Create Airtable Record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xPDm2Azoeami6p7A",
+          "name": "Airtable Personal Access Token account 9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ac-pt-26-04-14.n8n.irn.hk/webhook/a46331ca-4a26-402a-bfb1-7fbb89246de5",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "employee_id",
+              "value": "={{ $json.employee_id }}"
+            },
+            {
+              "name": "case_id",
+              "value": "={{ $json.case_id }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        448,
+        496
+      ],
+      "id": "4f10834d-76b7-4968-bf8d-2c2b080338fc",
+      "name": "Call Mock Workday API"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        672,
+        416
+      ],
+      "id": "76f9fc9e-d43a-460b-b4ae-6c381cd967ac",
+      "name": "Merge Case and Workday Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f9dd2738-e079-4971-89ed-401fa2ad7bcf",
+              "name": "sensitive_case",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).sensitive_case }}",
+              "type": "boolean"
+            },
+            {
+              "id": "6adcdb97-dfbf-4e6c-be06-01705003212e",
+              "name": "requires_hr_review",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).requires_hr_review }}",
+              "type": "boolean"
+            },
+            {
+              "id": "2c1cbf85-b5a5-4579-bf03-2e6f41c24db8",
+              "name": "risk_level",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).risk }}",
+              "type": "string"
+            },
+            {
+              "id": "d5f5c3dc-36b9-4443-ba83-26786e2ff67f",
+              "name": "category",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).category }}",
+              "type": "string"
+            },
+            {
+              "id": "17abf7e7-a56c-4844-83db-09a2e3577ef0",
+              "name": "classification_reason",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).reason }}",
+              "type": "string"
+            },
+            {
+              "id": "5e084735-1b87-4a41-8d5e-754ddc824b1f",
+              "name": "normalized_case_text",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).normalized_case_text }}",
+              "type": "string"
+            },
+            {
+              "id": "9ae30eab-2bf6-4408-91ef-6af7aea7eac0",
+              "name": "confidence",
+              "value": "={{ JSON.parse($json.output[0].content[0].text.message).confidence }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1472,
+        416
+      ],
+      "id": "847a3c7a-eeb0-4f0d-8e72-c9aa3aebb29a",
+      "name": "Parse Classification"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7cdce644-76fc-4192-98ba-1bb42723529e",
+              "leftValue": "={{ String($json.confidential_case || '').trim().toLowerCase().startsWith('yes') || String($json.case_text || '').toLowerCase().includes('abu') || /(harass|bully|discriminat|retaliat|assault|violen|threat|grievance|misconduct|self[- ]?harm|suicid|medical diagnos|disciplin|termination dispute|legal claim)/i.test(String($json.case_text || '')) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        896,
+        416
+      ],
+      "id": "43d63d2f-3594-4b9e-9bf2-fb903fa9253d",
+      "name": "IF – Privacy Gate"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9c193fe2-f678-4f5b-ba19-ba8a5cbe14dd",
+              "leftValue": "={{ $json.sensitive_case }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1696,
+        416
+      ],
+      "id": "885315e2-f236-4cf8-8ebc-64920fc99fc6",
+      "name": "If-Secondary Sensitive case check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5bc0a906-e53e-410a-b669-e52c8a2b92da",
+              "leftValue": "={{ $json.policy_found }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ true }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2496,
+        544
+      ],
+      "id": "552e97a6-9d5e-45a8-ae82-7b5d76ac9083",
+      "name": "IF- Policy Found"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge Case and Workday Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call Mock Workday API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate sensitive case": {
+      "main": [
+        [
+          {
+            "node": "HR Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Draft for HR review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft for HR review": {
+      "main": [
+        [
+          {
+            "node": "HR Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No policy found": {
+      "main": [
+        [
+          {
+            "node": "HR Cases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HR Cases": {
+      "main": [
+        [
+          {
+            "node": "Create Airtable Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Meridian Policy": {
+      "main": [
+        [
+          {
+            "node": "Prepare RAG Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Retrieve Meridian Policy",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare RAG Result": {
+      "main": [
+        [
+          {
+            "node": "IF- Policy Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize and Classify HR Case": {
+      "main": [
+        [
+          {
+            "node": "Parse Classification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Mock Workday API": {
+      "main": [
+        [
+          {
+            "node": "Merge Case and Workday Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Case and Workday Data": {
+      "main": [
+        [
+          {
+            "node": "IF – Privacy Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Airtable Record": {
+      "main": [
+        []
+      ]
+    },
+    "IF – Privacy Gate": {
+      "main": [
+        [
+          {
+            "node": "Escalate sensitive case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalize and Classify HR Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If-Secondary Sensitive case check": {
+      "main": [
+        [
+          {
+            "node": "Escalate sensitive case",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retrieve Meridian Policy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Classification": {
+      "main": [
+        [
+          {
+            "node": "If-Secondary Sensitive case check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF- Policy Found": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No policy found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e8b359a7-a8d8-402a-983c-f88e80d58ff2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "830695148bd1ae79a7685a5d7f1fa337ea0c44b5e0b04bf9816d60425264c85f"
+  },
+  "id": "7V10Uv6i8t3BaLET",
+  "tags": []
+}

@@ -1,0 +1,324 @@
+{
+  "name": "Employee Feedback Form",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Employee HR Feedback",
+        "formDescription": "Please tell us whether your HR question was answered and whether you would like further support.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "case_id",
+              "fieldType": "=text",
+              "fieldOptions": {
+                "values": [
+                  {}
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "question_answered",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "Partly"
+                  },
+                  {
+                    "option": "No"
+                  },
+                  {}
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "human_support_requested",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "feedback_comment",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "678a49ce-c243-45d6-863b-8f7fcb3045c0",
+      "name": "On form submission",
+      "webhookId": "05ed25c5-fc6d-4ba9-b80e-eae7bcc5a6b9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b1424afe-980f-4d84-8cc6-87078d072fd1",
+              "name": "case_id",
+              "value": "={{ $json.case_id }}",
+              "type": "string"
+            },
+            {
+              "id": "83d34c4d-79f1-4c57-a57f-da9119904071",
+              "name": "question_answered:",
+              "value": "={{ $json.question_answered }}",
+              "type": "string"
+            },
+            {
+              "id": "f2c55f53-dfba-4c5a-8ea2-8a11a2e0670e",
+              "name": "human_support_requested:",
+              "value": "={{ $json.human_support_requested }}",
+              "type": "string"
+            },
+            {
+              "id": "558012dd-dd2f-4eb2-a0d3-f232c52d114e",
+              "name": "feedback_comment",
+              "value": "={{ $json.feedback_comment }}",
+              "type": "string"
+            },
+            {
+              "id": "cc239fac-0c19-4c29-8cbf-a5d072ef6e88",
+              "name": "submitted_at:",
+              "value": "={{ $json.submittedAt }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f25b1190-d4a3-41ec-934e-baf2ac16ca2a",
+      "name": "Prepare Feedback"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appbDqcjicv2J4dqN",
+          "mode": "list",
+          "cachedResultName": "HR_Cases",
+          "cachedResultUrl": "https://airtable.com/appbDqcjicv2J4dqN"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblOJKy8sDp5mXzBD",
+          "mode": "list",
+          "cachedResultName": "Employee Feedback",
+          "cachedResultUrl": "https://airtable.com/appbDqcjicv2J4dqN/tblOJKy8sDp5mXzBD"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "case_id": "={{ $json.case_id }}",
+            "question_answered": "={{ $json['question_answered:'] }}",
+            "human_support_requested": "={{ $json['human_support_requested:'] }}",
+            "feedback_comment": "={{ $json.feedback_comment }}",
+            "submitted_at": "={{ $json['submitted_at:'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Feedback ID",
+              "displayName": "Feedback ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Action Status",
+              "displayName": "Action Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "In Review",
+                  "value": "In Review"
+                },
+                {
+                  "name": "Actioned",
+                  "value": "Actioned"
+                },
+                {
+                  "name": "Closed",
+                  "value": "Closed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "case_id",
+              "displayName": "case_id",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "question_answered",
+              "displayName": "question_answered",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Yes",
+                  "value": "Yes"
+                },
+                {
+                  "name": "Partly",
+                  "value": "Partly"
+                },
+                {
+                  "name": "No",
+                  "value": "No"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "human_support_requested",
+              "displayName": "human_support_requested",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Yes",
+                  "value": "Yes"
+                },
+                {
+                  "name": "No",
+                  "value": "No"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "feedback_comment",
+              "displayName": "feedback_comment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "51f5d291-5c5d-4410-b506-a7e2a779cbec",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "xPDm2Azoeami6p7A",
+          "name": "Airtable Personal Access Token account 9"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Prepare Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Feedback": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "14b0896c-91b4-4c93-9a89-0adcb23a724d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "830695148bd1ae79a7685a5d7f1fa337ea0c44b5e0b04bf9816d60425264c85f"
+  },
+  "id": "XiPsgFDfxe1Jqp6f",
+  "tags": []
+}
